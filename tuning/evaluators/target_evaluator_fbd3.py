@@ -1,0 +1,98 @@
+#!/usr/bin/python3
+###############################################################################
+# This script is run for each candidate to evaluate it after all
+# candidate configurations have been run on a single instance.
+#
+# Check the examples in examples/
+#
+# PARAMETERS:
+# $1 is the candidate configuration number
+# $2 is the instance id
+# $3 is the seed
+# $4 is the instance name
+# $5 is the number of candidates alive in this iteration
+#
+# ONLY FOR ELITIST RACE: The rest ($* after `shift 5') are the ids of the 
+# candidates alive in this iteration. This list can be used to calculate the 
+# hypervolume using previous execution results.
+#
+# RETURN VALUE:
+# This script should print one numerical value: the cost that must be minimized.
+# Exit with 0 if no error, with 1 in case of error
+###############################################################################
+
+import warnings
+warnings.simplefilter("ignore")
+import os
+import re
+import subprocess
+import sys
+import datetime
+from jmetal.core.quality_indicator import HyperVolume
+from jmetal.core.solution import Solution
+
+if __name__ == '__main__':
+    if len(sys.argv) < 5:
+        print("\nUsage: ./target-runner.py <configuration_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n")
+        sys.exit(1)
+
+    # Get the parameters as command line arguments.
+    configuration_id = sys.argv[1]
+    instance_id = sys.argv[2]
+    seed = sys.argv[3]
+    instance = sys.argv[4]
+    num_configs = sys.argv[5]
+    all_conf_id = sys.argv[6:]
+
+    sep = instance.split('/')
+    benchmark = sep[-3]
+    instance = os.path.join(sep[-2], sep[-1])#benchmark + sep[-1])
+    size = int(instance.split('/')[0].split('_')[1])
+    #size = 50
+    name_instance = instance.split('.')[0]
+    algorithm_tag = 'fbd3'
+    problem_tag = os.path.join(name_instance, "Config"+str(configuration_id))
+
+    n_run = 1
+    all_hypervolumes = []
+    indicator = HyperVolume([1.001, 1.001])
+    for r in range(n_run):
+        normalized_solutions = []
+        input_path = os.path.join('data_iRace', algorithm_tag, problem_tag, "Run"+str(r+1),"Final", "FUN.tsv")
+        extrema = os.path.join('extrema',  name_instance, 'extrema.txt') 
+
+        with open(extrema, "r") as file:
+            lines = file.readlines()
+            data = [line.lstrip() for line in lines if line != ""]
+            line_obj1 = [float(i) for i in data[0].split()]
+            line_obj2 = [float(i) for i in data[1].split()]
+            min_obj1, max_obj1 = line_obj1[0], line_obj1[1]
+            min_obj2, max_obj2 = line_obj2[0], line_obj2[1]
+
+        #print("I found an extrema", extrema, input_path)
+        with open(input_path) as file:
+            lines = file.readlines()
+            data = [line.lstrip() for line in lines if line != ""]
+            nbLines = len(data)
+            for line in data:
+                float_line = [float(i) for i in line.split()[:]]
+                obj1 = float_line[0]
+                obj2 = float_line[1]
+
+                norm_obj1 = round((obj1 - min_obj1)/(max_obj1 - min_obj1),5)
+                norm_obj2 = round((obj2 - min_obj2)/(max_obj2 - min_obj2),5)
+                
+                solution = Solution(int(size), 2)
+                solution.objectives[0] = norm_obj1
+                solution.objectives[1] = norm_obj2
+
+                normalized_solutions.append(solution)
+
+        result = indicator.compute([i.objectives for i in normalized_solutions])
+        all_hypervolumes.append(result)
+    mean_hypervolume = round(sum(all_hypervolumes)/len(all_hypervolumes),5)
+    print(str(-mean_hypervolume) + '\n')
+    sys.exit(0)
+
+
+    

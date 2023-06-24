@@ -1,0 +1,348 @@
+#------------------------------------------------------------------------------
+# irace: An implementation in R of (Elitist) Iterated Racing
+# Version: 3.4.1.9fcaeaf
+# Copyright (C) 2010-2020
+# Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
+# Jeremie Dubois-Lacoste  
+# Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
+#
+# This is free software, and you are welcome to redistribute it under certain
+# conditions.  See the GNU General Public License for details. There is NO
+# WARRANTY; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# irace builds upon previous code from the race package:
+#     race: Racing methods for the selection of the best
+#     Copyright (C) 2003 Mauro Birattari
+#------------------------------------------------------------------------------
+# installed at: /usr/local/lib/R/site-library/irace
+# called with: -s scenario_node1.txt --log-file eliteConfigurations/fbd2/irace_fbd2_C.Rdata --target-runner runners/target_runner_fbd2.py --target-evaluator evaluators/target_evaluator_fbd2.py
+# Read 1 configuration(s) from file '/home/clement/tuning/initialConfiguration.txt'
+# 2022-12-23 16:20:38 CET: Initialization
+# Elitist race
+# Elitist new instances: 1
+# Elitist limit: 2
+# nbIterations: 8
+# minNbSurvival: 4
+# nbParameters: 5
+# seed: 532158646
+# confidence level: 0.95
+# budget: 1000
+# mu: 5
+# deterministic: FALSE
+
+# 2022-12-23 16:20:38 CET: Iteration 1 of 8
+# experimentsUsedSoFar: 0
+# remainingBudget: 1000
+# currentBudget: 125
+# nbConfigurations: 20
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|          1|         20|          6|  -0.9306600000|         20|00:12:39|   NA|  NA|    NA|
+|x|          2|         20|          3|  -0.9025500000|         40|00:12:17|+0.12|0.56|0.8123|
+|x|          3|         20|         13|  -0.8950700000|         60|00:12:19|+0.17|0.44|0.7964|
+|x|          4|         20|          6|  -0.9044950000|         80|00:12:20|+0.10|0.32|0.8206|
+|=|          5|         20|          6|  -0.9048560000|        100|00:12:17|+0.13|0.31|0.7879|
+|-|          6|         10|          6|  -0.8902900000|        120|00:12:16|-0.05|0.13|0.9154|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:           6    mean value:   -0.8902900000
+Description of the best-so-far configuration:
+  .ID. granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups .PARENT.
+6    6        0.25                   0.20              8                 1.00       20       NA
+
+# 2022-12-23 17:34:51 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups
+6         0.25                   0.20              8                 1.00       20
+1         0.50                   0.10              5                 1.00        5
+13        0.50                   0.20              8                 1.00       40
+8         0.25                   0.20              8                 1.00        3
+# 2022-12-23 17:34:51 CET: Iteration 2 of 8
+# experimentsUsedSoFar: 120
+# remainingBudget: 880
+# currentBudget: 125
+# nbConfigurations: 21
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|          7|         21|         36|  -0.9157500000|         21|00:12:22|   NA|  NA|    NA|
+|x|          5|         21|         23|  -0.8917900000|         38|00:12:17|-0.26|0.37|1.1983|
+|x|          3|         21|         36|  -0.9014566667|         55|00:12:20|-0.02|0.32|0.9180|
+|x|          6|         21|         34|  -0.8777400000|         72|00:12:16|-0.02|0.24|0.9247|
+|=|          2|         21|         34|  -0.8768340000|         89|00:12:18|+0.07|0.25|0.8818|
+|=|          1|         21|          6|  -0.8814283333|        106|00:12:21|+0.08|0.24|0.8937|
+|=|          4|         21|          6|  -0.8898800000|        123|00:12:19|+0.09|0.22|0.8725|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:           6    mean value:   -0.8898800000
+Description of the best-so-far configuration:
+  .ID. granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups .PARENT.
+6    6        0.25                   0.20              8                 1.00       20       NA
+
+# 2022-12-23 19:01:06 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups
+6         0.25                   0.20              8                 1.00       20
+34        0.50                   0.10              5                 0.75       20
+23        0.25                   0.20              5                 1.00       40
+1         0.50                   0.10              5                 1.00        5
+# 2022-12-23 19:01:06 CET: Iteration 3 of 8
+# experimentsUsedSoFar: 243
+# remainingBudget: 757
+# currentBudget: 126
+# nbConfigurations: 19
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|          8|         19|         34|  -0.9086200000|         19|00:12:18|   NA|  NA|    NA|
+|x|          7|         19|         51|  -0.8954900000|         34|00:12:18|+0.42|0.71|0.5153|
+|x|          4|         19|         34|  -0.9107600000|         49|00:12:17|+0.28|0.52|0.5988|
+|x|          5|         19|         34|  -0.9075025000|         64|00:12:15|+0.19|0.39|0.7028|
+|=|          6|         19|         34|  -0.8989400000|         79|00:12:16|+0.12|0.30|0.7745|
+|=|          3|         19|         34|  -0.8924950000|         94|00:12:17|+0.07|0.23|0.8275|
+|=|          1|         19|         34|  -0.8937500000|        109|00:12:18|+0.03|0.17|0.8806|
+|=|          2|         19|         34|  -0.8911825000|        124|00:12:16|+0.02|0.15|0.8972|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:          34    mean value:   -0.8911825000
+Description of the best-so-far configuration:
+   .ID. granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups .PARENT.
+34   34        0.50                   0.10              5                 0.75       20        1
+
+# 2022-12-23 20:39:27 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups
+34        0.50                   0.10              5                 0.75       20
+6         0.25                   0.20              8                 1.00       20
+40        0.50                   0.10              5                 1.00       40
+1         0.50                   0.10              5                 1.00        5
+# 2022-12-23 20:39:27 CET: Iteration 4 of 8
+# experimentsUsedSoFar: 367
+# remainingBudget: 633
+# currentBudget: 126
+# nbConfigurations: 17
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|          9|         17|         34|  -0.8505200000|         17|00:12:16|   NA|  NA|    NA|
+|x|          3|         17|         40|  -0.8737350000|         30|00:12:16|+0.08|0.54|0.6560|
+|x|          5|         17|         40|  -0.8784933333|         43|00:12:14|+0.02|0.35|0.8078|
+|x|          4|         17|         40|  -0.8893050000|         56|00:12:16|-0.03|0.22|0.9237|
+|=|          2|         17|         40|  -0.8880360000|         69|00:12:15|-0.04|0.17|0.9439|
+|=|          1|         17|         40|  -0.8897066667|         82|00:12:17|-0.00|0.17|0.9153|
+|=|          6|         17|         34|  -0.8832985714|         95|00:12:14|+0.04|0.18|0.8926|
+|=|          8|         17|         34|  -0.8864637500|        108|00:12:16|+0.07|0.19|0.8757|
+|=|          7|         17|         34|  -0.8866644444|        121|00:12:18|+0.07|0.17|0.8824|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:          34    mean value:   -0.8866644444
+Description of the best-so-far configuration:
+   .ID. granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups .PARENT.
+34   34        0.50                   0.10              5                 0.75       20        1
+
+# 2022-12-23 22:29:53 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups
+34        0.50                   0.10              5                 0.75       20
+56        0.50                   0.10              2                 1.00       10
+55        0.25                   0.10              5                 1.00       20
+40        0.50                   0.10              5                 1.00       40
+# 2022-12-23 22:29:53 CET: Iteration 5 of 8
+# experimentsUsedSoFar: 488
+# remainingBudget: 512
+# currentBudget: 128
+# nbConfigurations: 16
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|         10|         16|         56|  -0.9391500000|         16|00:12:17|   NA|  NA|    NA|
+|x|          7|         16|         56|  -0.9171950000|         28|00:12:18|-0.30|0.35|1.2341|
+|x|          6|         16|         56|  -0.9001166667|         40|00:12:13|-0.07|0.29|1.0330|
+|x|          4|         16|         56|  -0.9101250000|         52|00:12:17|+0.06|0.30|0.9285|
+|=|          9|         16|         56|  -0.8909280000|         64|00:12:14|+0.09|0.27|0.8791|
+|=|          8|         16|         34|  -0.8974966667|         76|00:12:15|+0.06|0.22|0.8841|
+|=|          5|         16|         34|  -0.8975300000|         88|00:12:16|+0.03|0.17|0.9091|
+|=|          2|         16|         34|  -0.8944900000|        100|00:12:15|+0.06|0.18|0.8817|
+|=|          3|         16|         34|  -0.8906877778|        112|00:12:17|+0.05|0.15|0.8972|
+|=|          1|         16|         34|  -0.8917470000|        124|00:12:17|+0.05|0.15|0.8913|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:          34    mean value:   -0.8917470000
+Description of the best-so-far configuration:
+   .ID. granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups .PARENT.
+34   34        0.50                   0.10              5                 0.75       20        1
+
+# 2022-12-24 00:32:38 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups
+34        0.50                   0.10              5                 0.75       20
+56        0.50                   0.10              2                 1.00       10
+40        0.50                   0.10              5                 1.00       40
+77        0.50                   0.10              5                 0.75       20
+# 2022-12-24 00:32:38 CET: Iteration 6 of 8
+# experimentsUsedSoFar: 612
+# remainingBudget: 388
+# currentBudget: 129
+# nbConfigurations: 15
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|         11|         15|         34|  -0.9367800000|         15|00:12:18|   NA|  NA|    NA|
+|x|          1|         15|         34|  -0.9190300000|         26|00:12:15|-0.11|0.45|0.9959|
+|x|          2|         15|         56|  -0.9056633333|         37|00:12:14|+0.04|0.36|0.8963|
+|x|          6|         15|         56|  -0.8957375000|         48|00:12:13|+0.12|0.34|0.8290|
+|=|          5|         15|         34|  -0.8947380000|         59|00:12:13|+0.08|0.26|0.8461|
+|=|          7|         15|         34|  -0.8936600000|         70|00:12:15|+0.08|0.23|0.8239|
+|=|          8|         15|         34|  -0.8957971429|         81|00:12:15|+0.11|0.24|0.8071|
+|-|          4|          9|         34|  -0.9007462500|         92|00:12:15|-0.05|0.08|0.9341|
+|=|          9|          9|         34|  -0.8951655556|         97|00:12:11|-0.02|0.10|0.9079|
+|=|          3|          9|         34|  -0.8916760000|        102|00:12:12|-0.03|0.07|0.9179|
+|=|         10|          9|         34|  -0.8958409091|        107|00:12:12|-0.03|0.06|0.9157|
+|=|         12|          9|         34|  -0.8965408333|        116|00:12:13|-0.03|0.05|0.9226|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:          34    mean value:   -0.8965408333
+Description of the best-so-far configuration:
+   .ID. granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups .PARENT.
+34   34        0.50                   0.10              5                 0.75       20        1
+
+# 2022-12-24 02:59:31 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups
+34        0.50                   0.10              5                 0.75       20
+56        0.50                   0.10              2                 1.00       10
+84        0.50                   0.10              5                 0.75       40
+83        0.75                   0.10              8                 0.50       20
+# 2022-12-24 02:59:31 CET: Iteration 7 of 8
+# experimentsUsedSoFar: 728
+# remainingBudget: 272
+# currentBudget: 136
+# nbConfigurations: 14
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|         13|         14|         91|  -0.8982500000|         14|00:12:15|   NA|  NA|    NA|
+|x|          5|         14|         89|  -0.9018950000|         24|00:12:15|+0.35|0.67|0.7792|
+|x|          8|         14|         89|  -0.8995233333|         34|00:12:14|+0.28|0.52|0.6847|
+|x|          2|         14|         89|  -0.8911800000|         44|00:12:13|+0.21|0.41|0.7816|
+|-|         12|          7|         89|  -0.8956760000|         54|00:12:17|-0.05|0.16|0.9348|
+|=|          3|          7|         89|  -0.8950516667|         57|00:12:10|+0.01|0.18|0.8495|
+|=|         10|          7|         89|  -0.9000971429|         60|00:12:11|-0.07|0.08|0.9197|
+|=|          6|          7|         89|  -0.8929675000|         63|00:12:08|-0.05|0.08|0.9062|
+|=|         11|          7|         34|  -0.8938011111|         66|00:12:12|-0.02|0.10|0.8714|
+|=|          9|          7|         34|  -0.8894730000|         69|00:12:09|-0.01|0.09|0.8540|
+|=|          7|          7|         34|  -0.8893636364|         72|00:12:10|-0.01|0.08|0.8526|
+|=|          1|          7|         34|  -0.8903566667|         75|00:12:13|-0.04|0.05|0.8909|
+|=|          4|          7|         34|  -0.8938207692|         78|00:12:11|-0.02|0.06|0.8790|
+|=|         14|          7|         34|  -0.8954142857|         85|00:12:12|-0.04|0.03|0.8918|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:          34    mean value:   -0.8954142857
+Description of the best-so-far configuration:
+   .ID. granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups .PARENT.
+34   34        0.50                   0.10              5                 0.75       20        1
+
+# 2022-12-24 05:50:30 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups
+34        0.50                   0.10              5                 0.75       20
+98        0.50                   0.10              5                 1.00       20
+89        0.50                   0.10              5                 0.75       20
+56        0.50                   0.10              2                 1.00       10
+# 2022-12-24 05:50:30 CET: Iteration 8 of 8
+# experimentsUsedSoFar: 813
+# remainingBudget: 187
+# currentBudget: 187
+# nbConfigurations: 16
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|      Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+|x|         15|         16|         89|  -0.9326900000|         16|00:12:18|   NA|  NA|    NA|
+|x|          4|         16|         89|  -0.9296400000|         28|00:12:15|-0.39|0.31|1.0998|
+|x|         13|         16|         89|  -0.9187933333|         40|00:12:15|-0.27|0.15|1.0893|
+|x|          9|         16|         89|  -0.8910650000|         52|00:12:13|-0.08|0.19|0.9611|
+|=|          5|         16|         89|  -0.8941900000|         64|00:12:14|+0.04|0.24|0.8543|
+|=|         14|         16|         89|  -0.8996533333|         76|00:12:16|-0.00|0.16|0.9022|
+|=|          8|         16|         89|  -0.8989571429|         88|00:12:16|-0.01|0.13|0.9273|
+|=|          7|         16|         89|  -0.8988350000|        100|00:12:16|-0.02|0.11|0.9349|
+|=|         10|         16|         98|  -0.9005244444|        112|00:12:15|+0.01|0.12|0.9061|
+|=|          2|         16|         98|  -0.8979870000|        124|00:12:14|-0.01|0.09|0.9232|
+|=|         12|         16|         98|  -0.8992881818|        136|00:12:19|-0.01|0.09|0.9336|
+|=|          1|         16|         98|  -0.8992233333|        148|00:12:16|+0.00|0.08|0.9271|
+|=|          6|         16|         98|  -0.8955661538|        160|00:12:13|+0.01|0.09|0.9199|
+|=|          3|         16|         89|  -0.8959400000|        172|00:12:16|-0.00|0.07|0.9315|
+|=|         11|         16|         98|  -0.8936000000|        184|00:12:18|+0.00|0.07|0.9255|
++-+-----------+-----------+-----------+---------------+-----------+--------+-----+----+------+
+Best-so-far configuration:          98    mean value:   -0.8936000000
+Description of the best-so-far configuration:
+   .ID. granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups .PARENT.
+98   98        0.50                   0.10              5                 1.00       20       34
+
+# 2022-12-24 08:54:31 CET: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups
+98         0.50                   0.10              5                 1.00       20
+34         0.50                   0.10              5                 0.75       20
+89         0.50                   0.10              5                 0.75       20
+100        0.50                   0.10              5                 1.00       40
+# Best configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    granularity probabilityLocalSearch maxPatternSize probabilityInjection nbGroups
+98         0.50                   0.10              5                 1.00       20
+34         0.50                   0.10              5                 0.75       20
+89         0.50                   0.10              5                 0.75       20
+100        0.50                   0.10              5                 1.00       40
+# Best configurations as commandlines (first number is the configuration ID; same order as above):
+98   --granularity 0.50 --ls 0.10 --pattern 5 --injection 1.00 --groups 20
+34   --granularity 0.50 --ls 0.10 --pattern 5 --injection 0.75 --groups 20
+89   --granularity 0.50 --ls 0.10 --pattern 5 --injection 0.75 --groups 20
+100  --granularity 0.50 --ls 0.10 --pattern 5 --injection 1.00 --groups 40

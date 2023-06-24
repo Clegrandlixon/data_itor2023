@@ -1,0 +1,307 @@
+#!/usr/bin/python3
+###############################################################################
+# This script is the command that is executed every run.
+# Check the examples in examples/
+#
+# This script is run in the execution directory (execDir, --exec-dir).
+#
+# PARAMETERS:
+# argv[1] is the candidate configuration number
+# argv[2] is the instance ID
+# argv[3] is the seed
+# argv[4] is the instance name
+# The rest (argv[5:]) are parameters to the run
+#
+# RETURN VALUE:
+# This script should print one numerical value: the cost that must be minimized.
+# Exit with 0 if no error, with 1 in case of error
+###############################################################################
+
+import datetime
+import os.path
+import re
+import subprocess
+import sys
+import os
+import sys
+import getopt
+import random
+from threading import local
+import numpy
+import time
+
+from numpy.random.mtrand import rand
+from jmetal.algorithm.multiobjective.learning import KnowledgeDiscoveryMOEAD
+from jmetal.core.problem import Problem
+from jmetal.util.aggregative_function import WeightedSum
+from jmetal.util.termination_criterion import StoppingByTime
+from jmetal.operator.crossover import PMXCrossover
+from jmetal.operator.extraction import PatternExtractionVRPTW
+from jmetal.operator.injection import PatternInjectionMOVRPTW
+from jmetal.operator.mutation import PermutationSwapMutation, NullMutation
+from jmetal.operator.localSearch_vrptw import ApplyManyOperators
+from jmetal.problem.multiobjective.movrptw import MOVRPTW
+from jmetal.lab.experiment import Experiment, Job, generate_summary_from_experiment
+from jmetal.core.solution import Solution
+
+# Useful function to print errors.
+def target_runner_error(msg):
+    now = datetime.datetime.now()
+    print(str(now) + " error: " + msg)
+    sys.exit(1)
+
+
+def list_of_weights(nbWeights):
+        # Update self.groups
+        x0, y0 = 0,1
+        weights = [(x0, y0)]
+        if nbWeights == 1:
+            return weights
+        for i in range(nbWeights-2):
+            xi, yi = x0 + (i+1)/(nbWeights-1), y0 - (i+1)/(nbWeights-1)
+            weights.append((xi, yi))
+        weights.append((1,0))
+        return weights
+
+    
+def neighbours_to_i(problem, i: int, metric: str, weight = None):
+    """ Given a metric between customers, compute the distance from i to each customer
+
+    :param problem: The problem considered (by default it is the bVRPTW)
+    :param i: The index of the customer
+    :param metric: The metric uses to compute the distances. It can be either "d1", "d2" or "d3". By default it should be "d3"
+    :param weight: If the metric is "d2", you have to precise the weight given to each objective
+    :return: The list of neighbours of i sorted by increasing distance
+    """
+    dimension = problem.number_of_variables + 1
+    neighbours_i = [-1] * dimension
+    for j in range(dimension): 
+        obj1_ij = problem.metricsMatrices[0][i][j]
+        nObj1_ij = (1 - (problem.extremaMetrics[0][1]-obj1_ij)/(problem.extremaMetrics[0][1] - problem.extremaMetrics[0][0]))
+        
+        obj2_ij = problem.metricsMatrices[1][i][j]
+        nObj2_ij = (1 - (problem.extremaMetrics[1][1]-obj2_ij)/(problem.extremaMetrics[1][1] - problem.extremaMetrics[1][0]))
+        
+        if metric == "d1":
+            fit_ij = nObj1_ij
+        elif metric == "d2":
+            (w1,w2) = weight
+            fit_ij = w1 * nObj1_ij + w2 * nObj2_ij
+        elif metric == "d3":
+            fit_ij = nObj1_ij + nObj2_ij
+        neighbours_i[j] = (fit_ij, j)
+        
+    neighbours_i.sort()
+    return neighbours_i
+
+def relevant_neighbours(nbSubproblems: int, problem, metric: str):
+    """ For each customer of the instance of the problem in argument, 
+    compute its problem.granularity closest neighbours given a metric. 
+    
+    :param nbSubproblems: The number of subproblems generated in MOEAD
+    :param problem: The problem solved by MOEAD
+    :param metric: The metric uses to compute the distances. It can be either "d1", "d2" or "d3". By default it should be "d3"
+    """
+    reducedNeighbours = {} # the i-th list contains the neighborhood for the i-th subproblem
+    weights = list_of_weights(nbSubproblems)
+    for l in range(nbSubproblems):
+        reducedNeighbours[l] = []
+        dimension = problem.number_of_variables + 1
+        weight = weights[l]
+        for i in range(dimension):
+            neighbours_i = neighbours_to_i(problem, i, metric, weight)
+            reducedNeighbours[l].append([j[1] for j in neighbours_i[1:problem.granularity]])
+    return reducedNeighbours
+    
+def configure_experiment_hybrid(instance: str, allParameters: dict, config_id: int, run: int):
+    jobs = []
+    input_file = os.path.join('resources', 'VRPTW_instances', 'Generated', instance)
+    max_neighbours = allParameters['granularity']
+    problem = MOVRPTW(max_neighbours, input_file)
+    problem_tag = os.path.join(instance, "Config"+str(config_id), "Run"+str(run),"Final")
+
+    # Meta-Parameters
+    n = problem.number_of_variables
+    #maxEvaluations = allParameters['maxEvaluations'] 
+    maxTime = allParameters['maxTime']
+    # parameters specific to the normal version
+    populationSize = allParameters['populationSize']
+    neighbourhood_selection_probability = 1.0 # always = 1.0
+    sizeNeighborhood = allParameters['sizeNeighborhood']
+    probabilityCrossover = allParameters['probabilityCrossover']
+    probabilityMutation = allParameters['probabilityMutation']
+    probabilityLocalSearch = allParameters["probabilityLocalSearch"]
+    nbGroups = allParameters["nbGroups"]
+    
+
+    # parameters specific to the hybrid version
+    
+    maxPatternSize = allParameters['maxPatternSize']
+    # probabilityAcceptance = allParameters['probabilityDiversification'] 
+    patternsInjected = allParameters['patternsInjected']
+    # frequencyExtraction = allParameters['frequencyExtraction']
+    probabilityInjection = allParameters['probabilityInjection']
+
+    #############################
+    ####### TO MODIFY ###########
+    NAME_algo = 'bd1'
+    metric = "d1"
+    injectionStrategy = 1
+    extractionStrategy = 1
+    lsStrategy = "BEST-BEST"
+    #nbGroups = 5
+    solutionsForExtraction = "standard"
+    #############################
+    adaptedNeighbours = relevant_neighbours(allParameters['populationSize'], problem, metric)
+
+    ls = ApplyManyOperators(problem, probability = allParameters['probabilityLocalSearch'], strategy= lsStrategy, neighbours= adaptedNeighbours)
+    
+    
+    job = Job(
+        algorithm = KnowledgeDiscoveryMOEAD(
+            problem = problem,
+            aggregative_function = WeightedSum(),
+            population_size = allParameters['populationSize'],
+            optimizeInitialPopulation= False,
+            neighbor_size = allParameters['sizeNeighborhood'],
+            neighbourhood_selection_probability = neighbourhood_selection_probability,
+            max_number_of_replaced_solutions = 2,
+            nbGroups= allParameters['nbGroups'],
+            maxPatternSize = allParameters['maxPatternSize'],
+            number_of_patterns_injected = allParameters['patternsInjected'],
+            crossover = PMXCrossover(probability = allParameters['probabilityCrossover']),
+            mutation = NullMutation(),
+            extraction = PatternExtractionVRPTW(diversificationFactor = extractionStrategy),
+            solutionsForExtraction= solutionsForExtraction,
+            injection = PatternInjectionMOVRPTW(problem, probability = allParameters['probabilityInjection'], diversificationFactor = injectionStrategy),
+            localSearch= ls,
+            weight_files_path = 'resources/MOEAD_weights',
+            output_path = "",
+            extrema_path= os.path.join('extrema', instance),
+            termination_criterion = StoppingByTime(allParameters['maxTime'])),
+        algorithm_tag= NAME_algo,
+        problem_tag=problem_tag,
+        run=run,
+        seed = allParams['seed'])
+    return [job]
+
+if __name__=='__main__':
+    if len(sys.argv) < 5:
+        print("\nUsage: ./target-runner.py <configuration_id> <instance_id> <seed> <instance_path_name> <list of parameters>\n")
+        sys.exit(1)
+
+    # Get the parameters as command line arguments.
+    configuration_id = sys.argv[1]
+    instance_id = sys.argv[2]
+    seed = int(sys.argv[3])
+    instance = sys.argv[4]
+    cand_params = sys.argv[5:]
+    sep = instance.split('/')
+    instance = os.path.join(sep[-2],sep[-1])
+    size = int(instance.split('/')[0].split('_')[1])
+    name_instance = instance.split('.')[0]
+    # Default values (if any)
+    # Parse parameters
+    allParams = {}
+    allParams['populationSize']= 40
+    allParams['sizeNeighborhood']= 10
+    allParams['granularity']= None
+    allParams['probabilityCrossover']= 0.50
+    allParams['probabilityMutation']= 0.00
+    allParams["probabilityLocalSearch"] = None
+    allParams['maxPatternSize']= None
+    allParams['patternsInjected']= 100
+    allParams['probabilityInjection'] = None
+
+    while cand_params:
+        # Get and remove first and second elements.
+        param = cand_params.pop(0)
+        value = cand_params.pop(0)
+        if param == "--popSize":
+            allParams['populationSize'] = max(int(float(value) * size), 10)
+        elif param == "--granularity":
+            allParams['granularity'] = max(int(float(value) * size), 1)
+        elif param == "--crossover":
+            allParams['probabilityCrossover'] = float(value)
+        elif param == "--mutation":
+            allParams['probabilityMutation'] = float(value)
+        elif param == "--ls":
+            allParams["probabilityLocalSearch"] = float(value)
+        elif param == "--pattern":
+            allParams['maxPatternSize'] = int(value)
+        elif param == "--injected":
+            allParams['patternsInjected'] = int(float(value) * size)
+        elif param == "--injection":
+            allParams['probabilityInjection'] = float(value)
+        elif param == "--groups":
+            if int(value) == 1:
+                allParams['nbGroups'] = 1
+            else:
+                allParams['nbGroups'] = int(int(value)/100*allParams['populationSize']) #int(value)
+        else:
+            target_runner_error("unknown parameter %s" % (param))
+
+    # init seed
+    random.seed(seed)
+    numpy.random.seed(seed)
+    allParams['seed'] = seed
+    if size == 50:
+        allParams['maxTime'] = 90
+    elif size == 100:
+        allParams['maxTime'] = 720
+    allParams['sizeNeighborhood'] = int(0.25 * allParams['populationSize']) 
+    jobs = configure_experiment_hybrid(name_instance, allParams, configuration_id, 1)
+
+# Run the study
+    output_directory = 'data_iRace'
+    
+    experiment = Experiment(output_dir=output_directory, jobs=jobs)
+    
+    experiment.run()
+    
+    job = jobs[-1]
+    list_obj1 = [s.objectives[0] for s in job.results]
+    list_obj2 = [s.objectives[1] for s in job.results]
+    min_obj1 = min(list_obj1)
+    max_obj1 = max(list_obj1)
+    min_obj2 = max(0,min(list_obj2))
+    max_obj2 = max(list_obj2)
+
+    # Update extrema
+    output_path = os.path.join('extrema', name_instance)
+    output_file = os.path.join(output_path, 'extrema.txt') 
+
+    if not os.path.exists(output_path):
+        try :
+            os.makedirs(output_path)
+        except FileExistsError:
+            pass
+                
+    accessed = False
+    if os.path.isfile(output_file):
+        while not accessed:
+            try:
+                with open(output_file, 'r') as file:
+                    lines = file.readlines()
+                    data = [line.lstrip() for line in lines if line != ""]
+                    line_obj1 = [float(i) for i in data[0].split()]
+                    line_obj2 = [float(i) for i in data[1].split()]
+                    last_min_obj1, last_max_obj1 = line_obj1[0], line_obj1[1]
+                    last_min_obj2, last_max_obj2 = line_obj2[0], line_obj2[1]
+                    accessed = True
+            except IndexError:
+                pass
+                    
+        with open(output_file, 'w+') as file:
+            res_obj1 = str(round(min(min_obj1, last_min_obj1), 2)) + " " + str(round(min(max_obj1, last_max_obj1), 2)) + " \n" # keep the minimal nadir point (to avoid large hypervolumes)
+            res_obj2 = str(round(min(min_obj2, last_min_obj2), 2)) + " " + str(round(min(max_obj2, last_max_obj2), 2)) + " \n"
+            file.write(res_obj1)
+            file.write(res_obj2)
+    else:
+        with open(output_file, 'w+') as file:
+            res_obj1 = str(min_obj1) + " " + str(max_obj1) + " \n"
+            res_obj2 = str(min_obj2) + " " + str(max_obj2) + " \n"
+            file.write(res_obj1)
+            file.write(res_obj2)
+	
+
