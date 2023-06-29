@@ -97,11 +97,11 @@ def create_line_algorithm(instance, runs, threshold, startingPath):
         sizes.append(metrics[-1][2])
         uhv.append(metrics[-1][4])
         ttr.append(obtain_ttr(metrics, threshold))
-    line = instance["name"] + instance["id"] + " & " + str(round(np.mean(sizes), 1)) + " & " + str(round(np.mean(uhv), 4)) + " & " + str(round(np.mean(ttr), 1)) + "\\\\\n"
+    line =  " & " + str(round(np.mean(sizes), 1)) + " & " + str(round(np.mean(uhv), 4)) + " & " + str(round(np.mean(ttr), 1))
     return line
 
 def create_table_algorithm(benchmark, algorithm, instances, runs, threshold, outputPath):
-    header = "Instance & Avg Front Size & Avg uHV & TTR ("+str(threshold*100)+"\%) \\\\\n"
+    header = "Instance & Avg Front Size & Avg uHV & Time ("+str(threshold*100)+"\%) \\\\\n"
     
     if not os.path.exists(outputPath):
         os.makedirs(outputPath)
@@ -112,11 +112,12 @@ def create_table_algorithm(benchmark, algorithm, instances, runs, threshold, out
         of.write(header)
     
     for instance in instances:
+        line = instance["name"] + instance["id"]
         startingPath = os.path.join("performance_results", algorithm, benchmark, benchmark+"_"+instance["size"])
-        line = create_line_algorithm(instance, runs, threshold, startingPath)
+        line += create_line_algorithm(instance, runs, threshold, startingPath)
 
         with open(outputFile, "a+") as of:
-            of.write(line)
+            of.write(line+"\\\\\n")
     return
 
 def create_specific_table(benchmark, algorithms, instances, runs, threshold, outputPath):
@@ -126,14 +127,14 @@ def create_specific_table(benchmark, algorithms, instances, runs, threshold, out
     outputFile = os.path.join(outputPath, "table_"+benchmark+'_'+"spec.tsv")
 
     for instance in instances:
-        line = ""
+        line = instance["name"] + instance["id"]
         for algorithm in algorithms:
             startingPath = os.path.join("performance_results", algorithm, benchmark, benchmark+"_"+instance["size"])
             part_line = create_line_algorithm(instance, runs, threshold, startingPath)
             line += part_line
     
         with open(outputFile, "a+") as of:
-            of.write(line)
+            of.write(line+"\\\\\n")
     return 
 
 def create_line_dataFrame(instance, algorithm, run, threshold, inputPath):
@@ -171,7 +172,7 @@ def decimals(precision, max):
     return l
 
 DATAFOLDER = "results_cluster"
-ALGORITHMS = ["moeadls", "fbd1", "fbd2", "fbd3", "bd1", "bd2", "bd3"]
+ALGORITHMS = ["fbd2", "bd2", "moeadls"]
 BENCHMARK = "Solomon"
 NBRUNS = 30
 
@@ -220,17 +221,16 @@ elif BENCHMARK == "Homberger":
                 instance["id"] = id
                 generated_instances.append(instance)
 
-"""
 outputPath = os.path.join("Results", BENCHMARK, BENCHMARK+"_"+instance["size"])
+
 outputFile = "table.tsv"
 create_table_instances(BENCHMARK, generated_instances, outputPath, outputFile)
-"""
-"""
-outputPath = os.path.join("Results", BENCHMARK, BENCHMARK+"_"+instance["size"])
+
+
 for algorithm in ALGORITHMS:
-    create_table_algorithm(BENCHMARK, algorithm, generated_instances, [1,25], 0.80, outputPath)
-"""
+    create_table_algorithm(BENCHMARK, algorithm, generated_instances, [1,30], 0.80, outputPath)
 
-outputPath = os.path.join("Results", BENCHMARK, BENCHMARK+"_"+instance["size"])
-create_dataFrame_R(BENCHMARK, generated_instances, ALGORITHMS, 25, 0.80, outputPath)
 
+create_dataFrame_R(BENCHMARK, generated_instances, ALGORITHMS, 30, 0.80, outputPath)
+
+#create_specific_table(BENCHMARK, ALGORITHMS, generated_instances, [1, 30], 0.80, outputPath)
