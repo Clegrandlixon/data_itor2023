@@ -171,9 +171,9 @@ def decimals(precision, max):
         l.append('0'*(precision-len(d))+d)
     return l
 
-DATAFOLDER = "results_cluster"
+DATAFOLDER = "performance_results"
 ALGORITHMS = ["fbd2", "bd2", "moeadls"]
-BENCHMARK = "Solomon"
+BENCHMARK = "Homberger"
 NBRUNS = 30
 
 generated_instances = []
@@ -223,6 +223,7 @@ elif BENCHMARK == "Homberger":
 
 outputPath = os.path.join("Results", BENCHMARK, BENCHMARK+"_"+instance["size"])
 
+"""
 outputFile = "table.tsv"
 create_table_instances(BENCHMARK, generated_instances, outputPath, outputFile)
 
@@ -232,5 +233,5 @@ for algorithm in ALGORITHMS:
 
 
 create_dataFrame_R(BENCHMARK, generated_instances, ALGORITHMS, 30, 0.80, outputPath)
-
-#create_specific_table(BENCHMARK, ALGORITHMS, generated_instances, [1, 30], 0.80, outputPath)
+"""
+create_specific_table(BENCHMARK, ALGORITHMS, generated_instances, [1, 30], 0.80, outputPath)

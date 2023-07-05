@@ -231,8 +231,8 @@ def update_reference_front(benchmark, instance, inputPath):
 
 
 
-DATAFOLDER = "results_cluster"
-ALGORITHMS = ["fbd2", "moeadls"]
+DATAFOLDER = "performance_results"
+ALGORITHMS = ["fbd1", "fbd2", "fbd3", "moeadls"]
 BENCHMARK = "Homberger"
 NBRUNS = 30
 
@@ -294,7 +294,7 @@ for algo in ALGORITHMS:
 create_objectiveSpace(allFiles)
 """
 
-
+"""
 allFiles = []
 for instance in generated_instances:
     #inputPath = os.path.join("objectiveSpace", BENCHMARK, BENCHMARK+"_"+instance["size"], instance["name"] + instance["id"], "space.tsv")
@@ -305,13 +305,13 @@ for instance in generated_instances:
     allFiles.append((inputPath, outputPath, outputFile))
 
 compute_corelations(allFiles)
-
-
 """
+
+
 for algo in ALGORITHMS:
     for idRun in range(1,NBRUNS+1):
         for instance in generated_instances:
-            print(instance)
+            print(algo, idRun, instance)
             inputPath = os.path.join(DATAFOLDER, algo, BENCHMARK, BENCHMARK+"_"+instance["size"], instance["name"] + instance["id"], "Run" + str(idRun), "Final")
             update_reference_front(BENCHMARK, instance, inputPath)
-"""
+
